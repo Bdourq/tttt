@@ -44,7 +44,7 @@ export const Hero: React.FC<HeroProps> = ({ onOrderClick }) => {
             <span className="text-[10px] font-black text-zinc-600 uppercase tracking-widest">مجموعة صيف 2026 وصلت!</span>
           </div>
 
-          <h2 className="text-3xl md:text-5xl font-black text-brand-green leading-[1.1] mb-6 tracking-tight">
+          <h2 className="text-3xl md:text-5xl font-bold text-brand-green leading-[1.2] mb-6 tracking-tight" style={{ fontFamily: "var(--font-display)" }}>
             أناقة شرعية تليق بكِ <br /> 
             <span className="text-gold-600 underline decoration-gold-200 underline-offset-8">بجودة تركية أصلية</span>
           </h2>
@@ -55,7 +55,7 @@ export const Hero: React.FC<HeroProps> = ({ onOrderClick }) => {
           
           <div className="flex flex-wrap justify-center gap-3 mb-10">
             {["✅ توصيل مجاني", "📦 معاينة قبل الدفع", "↩️ استبدال سهل"].map((badge, i) => (
-              <span key={i} className="bg-emerald-50 text-brand-green border border-emerald-100 px-4 py-2 rounded-xl text-xs md:text-sm font-black shadow-sm">
+              <span key={i} className="bg-gold-100 text-brand-green border border-gold-200 px-4 py-2 rounded-xl text-xs md:text-sm font-black shadow-sm">
                 {badge}
               </span>
             ))}
@@ -63,7 +63,7 @@ export const Hero: React.FC<HeroProps> = ({ onOrderClick }) => {
 
           <button 
             onClick={onOrderClick}
-            className="group bg-brand-green hover:bg-emerald-900 text-white px-12 py-5 rounded-2xl font-black text-xl md:text-2xl shadow-[0_20px_40px_-10px_rgba(44,94,67,0.4)] transition-all active:scale-95 flex items-center gap-3"
+            className="group bg-brand-green hover:bg-brand-dark text-white px-12 py-5 rounded-2xl font-black text-xl md:text-2xl shadow-[0_20px_40px_-10px_rgba(18,15,13,0.35)] transition-all active:scale-95 flex items-center gap-3"
           >
             تسوقي الآن
             <ShoppingCart className="w-6 h-6 group-hover:translate-x-[-4px] transition-transform" />

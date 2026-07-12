@@ -20,12 +20,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onOrder, idx 
 
   const badgeColors = {
     free: "bg-gold-500 animate-pulse",
-    best: "bg-emerald-600",
-    off: "bg-red-600",
-    default: "bg-zinc-900"
+    best: "bg-gold-600",
+    off: "bg-rose-600",
+    default: "bg-brand-dark"
   };
-
-  const isVideo = (url: string) => url.endsWith('.mp4');
 
   return (
     <motion.div 
@@ -153,12 +151,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onOrder, idx 
             <span className="text-sm text-zinc-300 line-through font-bold">{product.oldPrice} د.أ</span>
           </div>
           
-          <div className="bg-emerald-50 text-emerald-700 py-1.5 px-4 rounded-full font-black text-[10px] md:text-xs mb-6 inline-flex items-center gap-2 mx-auto border border-emerald-100">
+          <div className="bg-gold-100 text-gold-600 py-1.5 px-4 rounded-full font-black text-[10px] md:text-xs mb-6 inline-flex items-center gap-2 mx-auto border border-gold-200">
             السعر يشمل التوصيل بالكامل 🚚
           </div>
 
           {product.saveAmount && (
-            <div className="text-[11px] font-black text-brand-red mb-1 bg-red-50 py-1 rounded-md border border-red-100">
+            <div className="text-[11px] font-black text-brand-red mb-1 bg-rose-50 py-1 rounded-md border border-rose-100">
               🔥 {product.saveAmount}
             </div>
           )}
