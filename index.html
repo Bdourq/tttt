@@ -26,12 +26,6 @@
   </head>
   <body>
     <div id="root"></div>
-    <!-- Meta Pixel noscript fallback. The main Pixel + Purchase tracking is
-         wired in src/utils/pixel.ts and fires from React (see that file for
-         why: Purchase must only fire on the real checkout submit, not here). -->
-    <noscript>
-      <img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1358587313081123&ev=PageView&noscript=1" alt="" />
-    </noscript>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
