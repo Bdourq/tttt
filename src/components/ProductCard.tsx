@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { ShoppingCart, CheckCircle, Play } from "lucide-react";
 import { Product } from "../data";
+import { toWebp, toPoster } from "../utils/media";
 
 interface ProductCardProps {
   product: Product;
@@ -54,23 +55,28 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onOrder, idx 
               loop
               playsInline
               preload="auto"
+              poster={toPoster(activeMedia.url)}
               className="w-full h-full object-cover"
             >
               <source src={activeMedia.url} type="video/mp4" />
             </motion.video>
           ) : (
-            <motion.img 
-              key={activeMedia.url}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              src={activeMedia.url} 
-              alt={product.name} 
-              className="w-full h-full object-cover" 
-              decoding="async"
-              fetchPriority="high"
-            />
+            <picture>
+              <source srcSet={toWebp(activeMedia.url)} type="image/webp" />
+              <motion.img 
+                key={activeMedia.url}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.3 }}
+                src={activeMedia.url} 
+                alt={`${product.name} - صورة المنتج`} 
+                className="w-full h-full object-cover" 
+                decoding="async"
+                fetchPriority={idx === 0 ? "high" : "auto"}
+                loading={idx === 0 ? "eager" : "lazy"}
+              />
+            </picture>
           )}
         </AnimatePresence>
         
@@ -101,9 +107,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onOrder, idx 
                 <div className="absolute inset-0 flex items-center justify-center bg-black/20 text-white z-10">
                   <Play className="w-4 h-4 fill-white" />
                 </div>
-                <video className="w-full h-full object-cover" preload="metadata" muted playsInline>
-                  <source src={`${vid}#t=0.1`} type="video/mp4" />
-                </video>
+                <img src={toPoster(vid)} alt="" className="w-full h-full object-cover" loading="lazy" />
               </button>
             ))}
             {/* Image Thumbnails - showing all images instead of slicing at 5 */}
@@ -113,7 +117,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onOrder, idx 
                 onClick={() => setActiveMedia({ url: img, type: 'image' })}
                 className={`w-12 h-12 rounded-lg overflow-hidden border-2 transition-all shrink-0 ${activeMedia.url === img ? "border-gold-500 scale-105" : "border-transparent opacity-60 hover:opacity-100"}`}
               >
-                <img src={img} alt="thumb" className="w-full h-full object-cover" loading="lazy" />
+                <picture>
+                  <source srcSet={toWebp(img)} type="image/webp" />
+                  <img src={img} alt="" className="w-full h-full object-cover" loading="lazy" />
+                </picture>
               </button>
             ))}
           </div>
@@ -164,7 +171,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onOrder, idx 
             onClick={() => onOrder(product.name)}
             className="w-full bg-brand-dark hover:bg-brand-green text-white font-black py-4 rounded-xl shadow-lg transition-all transform active:scale-95 flex items-center justify-center gap-3 text-sm md:text-base"
           >
-            <ShoppingCart className="w-4 h-4 md:w-5 h-5" />
+            <ShoppingCart className="w-4 h-4 md:w-5 md:h-5" />
             اطلبي هذا الموديل الآن
           </button>
         </div>

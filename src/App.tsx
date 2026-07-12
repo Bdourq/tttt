@@ -220,15 +220,16 @@ export default function App() {
         )}
       </AnimatePresence>
 
-      {/* WhatsApp Speed Dial */}
-      <div className="fixed bottom-20 right-6 z-[60] hidden md:block">
+      {/* WhatsApp Speed Dial - available on all screen sizes; sits above the mobile sticky bar */}
+      <div className="fixed bottom-24 md:bottom-6 right-4 md:right-6 z-[60]">
         <a 
           href={`https://wa.me/${STORE_INFO.phone}`}
           target="_blank"
           rel="noreferrer"
-          className="bg-[#25D366] text-white p-4 rounded-full shadow-2xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all"
+          aria-label="تواصلي معنا عبر واتساب"
+          className="bg-[#25D366] text-white p-3.5 md:p-4 rounded-full shadow-2xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all"
         >
-          <Phone className="w-8 h-8" />
+          <Phone className="w-6 h-6 md:w-8 md:h-8" />
         </a>
       </div>
     </div>

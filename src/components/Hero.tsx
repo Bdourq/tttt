@@ -1,6 +1,7 @@
 import React from "react";
 import { motion } from "motion/react";
 import { ShoppingCart } from "lucide-react";
+import { toWebp } from "../utils/media";
 
 interface HeroProps {
   onOrderClick: () => void;
@@ -11,13 +12,17 @@ export const Hero: React.FC<HeroProps> = ({ onOrderClick }) => {
     <section className="relative bg-white max-w-7xl mx-auto my-6 rounded-[2rem] overflow-hidden shadow-2xl border border-zinc-100 min-h-[400px] md:min-h-[500px] flex flex-col md:flex-row items-center">
       {/* Visual Content */}
       <div className="w-full md:w-1/2 h-[300px] md:h-full relative overflow-hidden">
-        <img 
-          src="/images/p3-1.jpg" 
-          alt="أزياء حكاية خيط" 
-          className="w-full h-full object-cover scale-105 hover:scale-100 transition-transform duration-1000"
-          loading="eager"
-          fetchPriority="high"
-        />
+        <picture>
+          <source srcSet={toWebp("/images/p3-1.jpg")} type="image/webp" />
+          <img 
+            src="/images/p3-1.jpg" 
+            alt="أزياء حكاية خيط - جودة تركية أصلية" 
+            className="w-full h-full object-cover scale-105 hover:scale-100 transition-transform duration-1000"
+            loading="eager"
+            fetchPriority="high"
+            decoding="async"
+          />
+        </picture>
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent md:bg-gradient-to-l md:from-white md:to-transparent"></div>
         
         {/* Floating Badge on Image */}

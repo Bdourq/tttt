@@ -47,6 +47,7 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
                 name="productName" 
                 value={selectedProduct}
                 onChange={(e) => setSelectedProduct(e.target.value)}
+                aria-label="الموديل المطلوب"
                 className="w-full bg-white border border-zinc-200 rounded-xl px-4 py-3.5 text-sm font-bold text-brand-green focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 transition-all outline-none"
               >
                 {PRODUCTS.map(p => (
@@ -128,6 +129,8 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
                   value={formData.fullName}
                   onChange={handleInputChange}
                   required
+                  autoComplete="name"
+                  aria-label="الاسم الثلاثي"
                   className="w-full bg-white border border-zinc-200 rounded-xl pr-11 pl-4 py-3.5 text-sm focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 transition-all outline-none"
                 />
               </div>
@@ -146,6 +149,10 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
                   onChange={handleInputChange}
                   required
                   dir="ltr"
+                  autoComplete="tel"
+                  inputMode="numeric"
+                  aria-label="رقم الهاتف"
+                  maxLength={10}
                   className="w-full bg-white border border-zinc-200 rounded-xl pr-11 pl-4 py-3.5 text-sm focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 transition-all outline-none text-right font-mono"
                 />
               </div>
@@ -162,6 +169,8 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
                   value={formData.city}
                   onChange={handleInputChange}
                   required
+                  autoComplete="address-level1"
+                  aria-label="المحافظة"
                   className="w-full bg-white border border-zinc-200 rounded-xl pr-11 pl-4 py-3.5 text-sm focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 transition-all outline-none appearance-none"
                 >
                   <option value="" disabled>المحافظة *</option>
@@ -184,6 +193,8 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
                   value={formData.height}
                   onChange={handleInputChange}
                   required
+                  inputMode="numeric"
+                  aria-label="الطول بالسنتيمتر"
                   className="w-full bg-white border border-zinc-200 rounded-xl pr-9 pl-3 py-3 text-sm focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 transition-all outline-none"
                 />
               </div>
@@ -195,6 +206,8 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
                   value={formData.weight}
                   onChange={handleInputChange}
                   required
+                  inputMode="numeric"
+                  aria-label="الوزن بالكيلوغرام"
                   className="w-full bg-white border border-zinc-200 rounded-xl px-3 py-3 text-sm focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 transition-all outline-none"
                 />
               </div>
