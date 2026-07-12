@@ -1,13 +1,17 @@
 import React from "react";
-import { CheckCircle2, ShieldCheck, MapPin, Phone, Ruler, User } from "lucide-react";
+import { CheckCircle2, ShieldCheck, MapPin, Phone, Ruler, User, Gift } from "lucide-react";
 import { PRODUCTS } from "../data";
+import { CheckoutFormData, BundleItemValue } from "../types";
+import { isBundleOffer, buildBundleSummary, bundleTotal, BUNDLE_OFFER_LABEL, SINGLE_ITEM_LABEL } from "../utils/bundle";
+import { BundleItemPicker } from "./BundleItemPicker";
 
 interface CheckoutFormProps {
   checkoutRef: React.RefObject<HTMLDivElement>;
   selectedProduct: string;
   setSelectedProduct: (val: string) => void;
-  formData: any;
+  formData: CheckoutFormData;
   handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void;
+  handleBundleItemChange: (key: 'bundleItem2' | 'bundleItem3', value: BundleItemValue) => void;
   handleFormSubmit: (e: React.FormEvent) => void;
   isSubmitting: boolean;
 }
@@ -18,10 +22,22 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
   setSelectedProduct,
   formData,
   handleInputChange,
+  handleBundleItemChange,
   handleFormSubmit,
   isSubmitting
 }) => {
   const selectedProductData = PRODUCTS.find(p => p.name === selectedProduct);
+  const bundleActive = isBundleOffer(formData.bundleOffer);
+
+  const bundleSummary = bundleActive
+    ? buildBundleSummary(
+        { product: selectedProduct, color: formData.color, size: formData.notes },
+        formData.bundleItem2,
+        formData.bundleItem3
+      )
+    : null;
+  const liveTotal = bundleSummary ? bundleTotal(bundleSummary) : selectedProductData?.price;
+  const freeItem = bundleSummary?.find(i => i.isFree);
 
   return (
     <div className="max-w-xl mx-auto px-4 py-12 mb-20 md:mb-0" ref={checkoutRef}>
@@ -70,7 +86,7 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
                         onChange={handleInputChange}
                         className="peer sr-only"
                       />
-                      <div className="px-4 py-2 bg-white border-2 border-zinc-200 rounded-xl text-xs font-bold text-zinc-600 peer-checked:border-brand-green peer-checked:bg-emerald-50 peer-checked:text-brand-green transition-all flex items-center gap-2">
+                      <div className="px-4 py-2 bg-white border-2 border-zinc-200 rounded-xl text-xs font-bold text-zinc-600 peer-checked:border-brand-green peer-checked:bg-gold-100 peer-checked:text-brand-green transition-all flex items-center gap-2">
                         <span className="w-3 h-3 rounded-full shadow-sm" style={{ background: c.hex }}></span>
                         {c.name}
                       </div>
@@ -86,15 +102,43 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
                 name="bundleOffer" 
                 value={formData.bundleOffer}
                 onChange={handleInputChange}
-                className="w-full bg-amber-50 border-2 border-amber-200 rounded-xl px-4 py-3.5 text-sm font-black text-amber-900 focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 transition-all outline-none"
+                className="w-full bg-gold-100 border-2 border-gold-300 rounded-xl px-4 py-3.5 text-sm font-black text-brand-green focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 transition-all outline-none"
               >
-                <option value="قطعة واحدة فقط">لا، أريد قطعة واحدة فقط ({selectedProductData?.price} د.أ)</option>
-                <option value="العرض الذهبي 2+1 مجاناً">نعم! أريد عرض 2+1 مجاناً (التوصيل مجاني)</option>
+                <option value={SINGLE_ITEM_LABEL}>لا، أريد قطعة واحدة فقط ({selectedProductData?.price} د.أ)</option>
+                <option value={BUNDLE_OFFER_LABEL}>نعم! أريد عرض 2+1 مجاناً (التوصيل مجاني)</option>
               </select>
             </div>
+
+            {bundleActive && (
+              <div className="space-y-3 pt-2">
+                <p className="text-[11px] text-zinc-500 font-bold px-1">
+                  اختاري القطعتين الإضافيتين - الأرخص من بين القطع الثلاث تكون مجانية تلقائياً 🎁
+                </p>
+                <BundleItemPicker
+                  label="القطعة الثانية"
+                  value={formData.bundleItem2}
+                  onChange={(v) => handleBundleItemChange('bundleItem2', v)}
+                />
+                <BundleItemPicker
+                  label="القطعة الثالثة"
+                  value={formData.bundleItem3}
+                  onChange={(v) => handleBundleItemChange('bundleItem3', v)}
+                />
+
+                {freeItem && (
+                  <div className="bg-brand-green text-white p-4 rounded-xl flex items-center gap-3">
+                    <Gift className="w-6 h-6 text-gold-400 shrink-0" />
+                    <div className="text-xs leading-relaxed">
+                      <p className="font-black">هديتك المجانية: {freeItem.productName}</p>
+                      <p className="text-gold-300">الإجمالي بعد الخصم: <span className="font-black text-white">{liveTotal} د.أ</span> بدل {(selectedProductData?.price || 0) + (bundleSummary?.[1]?.price || 0) + (bundleSummary?.[2]?.price || 0)} د.أ</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
             
             <div className="space-y-2 pt-2">
-              <label className="block text-[11px] font-bold text-zinc-500 uppercase">المقاس المطلوب ({selectedProductData?.sizeType === 'weight' ? 'بالوزن' : selectedProductData?.sizeType === 'numbers' ? 'بالأرقام' : 'فري سايز'}) <span className="text-red-500">*</span></label>
+              <label className="block text-[11px] font-bold text-zinc-500 uppercase">المقاس المطلوب ({selectedProductData?.sizeType === 'weight' ? 'بالوزن' : selectedProductData?.sizeType === 'numbers' ? 'بالأرقام' : 'فري سايز'}) <span className="text-rose-600">*</span></label>
               <select
                 name="notes"
                 value={formData.notes}
@@ -215,9 +259,9 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
             <p className="text-[10px] text-zinc-400 mt-1 text-center">نطلب الطول والوزن لضمان إرسال المقاس المطابق 100%</p>
           </div>
 
-          <div className="bg-emerald-50 p-4 rounded-xl border border-emerald-100 flex items-start gap-3">
-            <ShieldCheck className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
-            <p className="text-xs font-bold text-emerald-800 leading-relaxed">
+          <div className="bg-gold-100 p-4 rounded-xl border border-gold-200 flex items-start gap-3">
+            <ShieldCheck className="w-5 h-5 text-gold-600 shrink-0 mt-0.5" />
+            <p className="text-xs font-bold text-brand-dark leading-relaxed">
               لن تدفعي أي مبلغ الآن. الدفع يكون فقط عند استلام الطلب وبعد المعاينة. التوصيل مجاني تماماً.
             </p>
           </div>
@@ -225,8 +269,8 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
           <button
             type="submit"
             disabled={isSubmitting}
-            className={`w-full text-white font-black py-5 rounded-2xl shadow-[0_15px_30px_-10px_rgba(44,94,67,0.5)] transition-all flex items-center justify-center gap-3 text-lg ${
-              isSubmitting ? "bg-zinc-400 cursor-not-allowed scale-100" : "bg-brand-green hover:bg-emerald-800 active:scale-[0.98]"
+            className={`w-full text-white font-black py-5 rounded-2xl shadow-[0_15px_30px_-10px_rgba(18,15,13,0.45)] transition-all flex items-center justify-center gap-3 text-lg ${
+              isSubmitting ? "bg-zinc-400 cursor-not-allowed scale-100" : "bg-brand-green hover:bg-brand-dark active:scale-[0.98]"
             }`}
           >
             {isSubmitting ? (
@@ -239,7 +283,7 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
               </span>
             ) : (
               <>
-                تأكيد الطلب (الدفع عند الاستلام)
+                تأكيد الطلب - {liveTotal ?? selectedProductData?.price} د.أ (الدفع عند الاستلام)
                 <CheckCircle2 className="w-6 h-6" />
               </>
             )}

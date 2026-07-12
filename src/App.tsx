@@ -2,7 +2,10 @@ import React, { useState, useEffect, useRef } from "react";
 import { Truck, Phone, ShoppingCart } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { PRODUCTS, STORE_INFO } from "./data";
-import { ViewState } from "./types";
+import { ViewState, BundleItemValue } from "./types";
+import { isBundleOffer, buildBundleSummary, bundleTotal, BUNDLE_OFFER_LABEL } from "./utils/bundle";
+import { logOrderToSheet } from "./utils/orderLog";
+import { initPixel, trackPurchase } from "./utils/pixel";
 
 // Components
 import { Header } from "./components/Header";
@@ -36,6 +39,8 @@ export default function App() {
     };
 
     window.addEventListener("scroll", handleScroll);
+    initPixel(); // safe no-op unless VITE_META_PIXEL_ID is configured
+
     return () => {
       clearInterval(timer);
       window.removeEventListener("scroll", handleScroll);
@@ -59,7 +64,9 @@ export default function App() {
     city: "",
     notes: "",
     color: PRODUCTS[0].colors?.[0].name || "أسود",
-    bundleOffer: "العرض الذهبي 2+1 مجاناً"
+    bundleOffer: BUNDLE_OFFER_LABEL,
+    bundleItem2: { product: "", color: "", size: "" } as BundleItemValue,
+    bundleItem3: { product: "", color: "", size: "" } as BundleItemValue,
   });
 
   useEffect(() => {
@@ -78,6 +85,10 @@ export default function App() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleBundleItemChange = (key: 'bundleItem2' | 'bundleItem3', value: BundleItemValue) => {
+    setFormData((prev) => ({ ...prev, [key]: value }));
+  };
+
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.fullName || !formData.phone || !formData.city || !formData.height || !formData.weight || !formData.notes) {
@@ -89,29 +100,65 @@ export default function App() {
       return;
     }
 
+    const matchedProduct = PRODUCTS.find(p => p.name === selectedProduct) || PRODUCTS[0];
+    const bundleActive = isBundleOffer(formData.bundleOffer);
+
+    let bundleItems;
+    let totalPrice = matchedProduct.price;
+
+    if (bundleActive) {
+      const item2Incomplete = !formData.bundleItem2.product || !formData.bundleItem2.size ||
+        (PRODUCTS.find(p => p.name === formData.bundleItem2.product)?.colors && !formData.bundleItem2.color);
+      const item3Incomplete = !formData.bundleItem3.product || !formData.bundleItem3.size ||
+        (PRODUCTS.find(p => p.name === formData.bundleItem3.product)?.colors && !formData.bundleItem3.color);
+
+      if (item2Incomplete || item3Incomplete) {
+        alert("لإتمام عرض 2+1 مجاناً، الرجاء اختيار الموديل واللون والمقاس للقطعتين الإضافيتين");
+        return;
+      }
+
+      const summary = buildBundleSummary(
+        { product: selectedProduct, color: formData.color, size: formData.notes },
+        formData.bundleItem2,
+        formData.bundleItem3
+      );
+      if (!summary) {
+        alert("حدث خطأ في اختيار المنتجات، الرجاء المحاولة مرة أخرى");
+        return;
+      }
+      bundleItems = summary;
+      totalPrice = bundleTotal(summary);
+    }
+
     setIsSubmitting(true);
     // Simulate API call for "Crazy Speed" feel
     setTimeout(() => {
       const randomId = Math.floor(1000 + Math.random() * 9000);
       const orderId = `HK-${randomId}`;
-      const matchedProduct = PRODUCTS.find(p => p.name === selectedProduct) || PRODUCTS[0];
+
+      const orderDetails = {
+        orderId,
+        product: matchedProduct,
+        fullName: formData.fullName,
+        phone: formData.phone,
+        height: formData.height,
+        weight: formData.weight,
+        city: formData.city,
+        notes: formData.notes,
+        color: formData.color,
+        bundleOffer: formData.bundleOffer,
+        bundleItems,
+        totalPrice,
+      };
+
+      // This is the ONLY place a real conversion is recorded: the actual
+      // "تأكيد الطلب" button, after validation passes. Never on page load,
+      // never on the WhatsApp/scroll buttons elsewhere on the page.
+      trackPurchase(totalPrice, orderId);
+      logOrderToSheet({ ...orderDetails, submittedAt: new Date().toISOString() });
 
       setIsSubmitting(false);
-      setView({
-        type: 'thank-you',
-        orderDetails: {
-          orderId,
-          product: matchedProduct,
-          fullName: formData.fullName,
-          phone: formData.phone,
-          height: formData.height,
-          weight: formData.weight,
-          city: formData.city,
-          notes: formData.notes,
-          color: formData.color,
-          bundleOffer: formData.bundleOffer
-        }
-      });
+      setView({ type: 'thank-you', orderDetails });
       window.scrollTo({ top: 0, behavior: "smooth" });
     }, 1400);
   };
@@ -138,7 +185,7 @@ export default function App() {
             initial={{ opacity: 0, scale: 0.98 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
-            className="bg-brand-green text-white p-5 md:p-6 rounded-2xl shadow-lg flex items-center gap-5 border border-emerald-800"
+            className="bg-brand-green text-white p-5 md:p-6 rounded-2xl shadow-lg flex items-center gap-5 border border-brand-dark"
           >
             <div className="bg-white/10 p-3 rounded-xl shrink-0">
               <Truck className="w-6 h-6 md:w-8 md:h-8 text-gold-300" />
@@ -189,6 +236,7 @@ export default function App() {
           setSelectedProduct={setSelectedProduct}
           formData={formData}
           handleInputChange={handleInputChange}
+          handleBundleItemChange={handleBundleItemChange}
           handleFormSubmit={handleFormSubmit}
           isSubmitting={isSubmitting}
         />
