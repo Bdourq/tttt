@@ -1,20 +1,31 @@
-@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;700;900&family=Amiri:wght@400;700&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --color-brand-green: #1a3626;
-  --color-brand-dark: #0f2017;
-  --color-brand-red: #cc0000;
-  
-  --color-gold-50: #fcfbf8;
-  --color-gold-100: #f7f3e8;
-  --color-gold-200: #eee4cc;
-  --color-gold-300: #e3d1a5;
-  --color-gold-400: #d6bb7a;
-  --color-gold-500: #c9a24d;
-  --color-gold-600: #b3863a;
-  
+  /* NOTE: token names kept as brand-green/brand-dark/brand-red for minimal
+     code churn across components, but their VALUES now express the luxury
+     black / ivory / champagne / dusty-rose direction requested. */
+  --color-brand-green: #1f1b18;   /* was forest green -> now deep warm charcoal-black (primary) */
+  --color-brand-dark: #120f0d;    /* true near-black, warm undertone */
+  --color-brand-red: #a8677a;     /* was bright red -> now dusty rose (urgency accent) */
+
+  --color-gold-50: #f8f3ea;    /* warm ivory - page background */
+  --color-gold-100: #f2e8d6;   /* pale champagne */
+  --color-gold-200: #e9d8b8;
+  --color-gold-300: #dcc394;
+  --color-gold-400: #cead6e;
+  --color-gold-500: #bf9552;   /* champagne gold - primary accent */
+  --color-gold-600: #a67c3d;
+
+  --color-rose-50: #faf1f2;
+  --color-rose-100: #f4dee1;
+  --color-rose-200: #e8c0c6;
+  --color-rose-500: #b3697a;
+  --color-rose-600: #9c5468;
+  --color-rose-700: #7d4152;
+
   --font-sans: "Cairo", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Amiri", "Cairo", serif;
 }
 
 @layer utilities {
@@ -28,9 +39,9 @@
 }
 
 @keyframes glow {
-  0% { box-shadow: 0 0 5px rgba(201, 162, 77, 0.2); }
-  50% { box-shadow: 0 0 20px rgba(201, 162, 77, 0.6); }
-  100% { box-shadow: 0 0 5px rgba(201, 162, 77, 0.2); }
+  0% { box-shadow: 0 0 5px rgba(191, 149, 82, 0.2); }
+  50% { box-shadow: 0 0 20px rgba(191, 149, 82, 0.55); }
+  100% { box-shadow: 0 0 5px rgba(191, 149, 82, 0.2); }
 }
 
 .animate-glow {
