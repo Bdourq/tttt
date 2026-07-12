@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#1a3626" />
+    <meta name="theme-color" content="#1f1b18" />
     <meta name="description" content="متجر حكاية خيط للأزياء المحتشمة - جودة تركية أصلية، توصيل مجاني، ومعاينة قبل الدفع لكل الأردن." />
 
     <!-- Open Graph / Meta Ads preview tags -->
@@ -26,6 +26,12 @@
   </head>
   <body>
     <div id="root"></div>
+    <!-- Meta Pixel noscript fallback. The main Pixel + Purchase tracking is
+         wired in src/utils/pixel.ts and fires from React (see that file for
+         why: Purchase must only fire on the real checkout submit, not here). -->
+    <noscript>
+      <img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1358587313081123&ev=PageView&noscript=1" alt="" />
+    </noscript>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
