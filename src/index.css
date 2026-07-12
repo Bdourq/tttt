@@ -1,0 +1,38 @@
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;700;900&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-brand-green: #1a3626;
+  --color-brand-dark: #0f2017;
+  --color-brand-red: #cc0000;
+  
+  --color-gold-50: #fcfbf8;
+  --color-gold-100: #f7f3e8;
+  --color-gold-200: #eee4cc;
+  --color-gold-300: #e3d1a5;
+  --color-gold-400: #d6bb7a;
+  --color-gold-500: #c9a24d;
+  --color-gold-600: #b3863a;
+  
+  --font-sans: "Cairo", ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@keyframes glow {
+  0% { box-shadow: 0 0 5px rgba(201, 162, 77, 0.2); }
+  50% { box-shadow: 0 0 20px rgba(201, 162, 77, 0.6); }
+  100% { box-shadow: 0 0 5px rgba(201, 162, 77, 0.2); }
+}
+
+.animate-glow {
+  animation: glow 2s infinite;
+}
