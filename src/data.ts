@@ -23,8 +23,8 @@ export interface Product {
 export const STORE_INFO = {
   name: "حكاية خيط",
   slogan: "أناقة شرعية تليق بكِ - جودة تركية أصلية",
-  phone: "962700000000",
-  formattedPhone: "070 000 0000",
+  phone: "962775347250", // used in wa.me links - no leading 00 or + (WhatsApp deep links break otherwise)
+  formattedPhone: "00962 77 534 7250",
   address: "عمان، الأردن - توصيل لكافة المحافظات",
 };
 
